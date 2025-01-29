@@ -3,14 +3,13 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <set>
 
 using namespace std;
 
 // Constants for floors, rooms, and seats
-const int FLOORS = 9;           // Total floors (excluding ground)
-const int ROOMS_PER_FLOOR = 10; // Rooms per floor
-const int SEATS_PER_ROOM = 5;   // Seats per room
+const int FLOORS = 9;
+const int ROOMS_PER_FLOOR = 10;
+const int SEATS_PER_ROOM = 5;
 
 // Booking data structure
 struct Booking
@@ -50,22 +49,21 @@ void loadBookingData()
         string line;
         while (getline(file, line))
         {
-            // Parse the line to extract booking details
             stringstream ss(line);
             Booking booking;
             string temp;
 
-            getline(ss, temp, ':');              // Skip "Name:"
-            getline(ss, booking.name, ',');      // Read name
-            getline(ss, temp, ':');              // Skip "ID:"
-            getline(ss, booking.studentId, ','); // Read ID
-            getline(ss, temp, ':');              // Skip "Semester:"
+            getline(ss, temp, ':');
+            getline(ss, booking.name, ',');
+            getline(ss, temp, ':');
+            getline(ss, booking.studentId, ',');
+            getline(ss, temp, ':');
             ss >> booking.semester;
-            getline(ss, temp, ':'); // Skip "Floor:"
+            getline(ss, temp, ':');
             ss >> booking.floor;
-            getline(ss, temp, ':'); // Skip "Room:"
+            getline(ss, temp, ':');
             ss >> booking.room;
-            getline(ss, temp, ':'); // Skip "Seat:"
+            getline(ss, temp, ':');
             ss >> booking.seat;
 
             // Update availability
@@ -75,7 +73,7 @@ void loadBookingData()
     }
 }
 
-// Function to check if a student ID already exists in the file
+// Function to check if a student ID already exists
 bool isStudentIdAlreadyBooked(const string &studentId)
 {
     ifstream file("booking_records.txt");
@@ -86,7 +84,7 @@ bool isStudentIdAlreadyBooked(const string &studentId)
         {
             if (line.find("ID: " + studentId) != string::npos)
             {
-                return true; // ID already exists
+                return true;
             }
         }
         file.close();
@@ -99,7 +97,7 @@ void displayAvailableFloors()
 {
     cout << "Available Floors:\n";
     for (int i = 1; i <= FLOORS; i++)
-    { // Floors start from 1
+    {
         cout << "Floor " << i << "\n";
     }
 }
@@ -114,8 +112,8 @@ void displayAvailableRooms(int floor)
     }
 }
 
-// Function to display available seats in a room
-void displayAvailableSeats(int floor, int room)
+// Function to display available seats in a room and return true if available
+bool displayAvailableSeats(int floor, int room)
 {
     cout << "Available Seats in Room " << floor * 1000 + room + 1 << ":\n";
     bool anyAvailable = false;
@@ -131,15 +129,14 @@ void displayAvailableSeats(int floor, int room)
     {
         cout << "No available seats in this room.\n";
     }
+    return anyAvailable;
 }
 
 // Function to book a seat
 void bookSeat(const Booking &booking)
 {
-    // Update availability
     availability[booking.floor - 1][booking.room][booking.seat - 1] = false;
 
-    // Save to file
     ofstream file("booking_records.txt", ios::app);
     if (file.is_open())
     {
@@ -152,65 +149,124 @@ void bookSeat(const Booking &booking)
     cout << "Booking successful! Your seat has been reserved.\n";
 }
 
+// Function to display all bookings with a serial number
+void displayAllBookings()
+{
+    ifstream file("booking_records.txt");
+    if (file.is_open())
+    {
+        string line;
+        int count = 0;
+        cout << "\n--- All Booking Records ---\n";
+        while (getline(file, line))
+        {
+            count++;
+            cout << count << ". " << line << endl; // Adding serial number before each booking
+        }
+        file.close();
+        if (count == 0)
+        {
+            cout << "No bookings found.\n";
+        }
+        else
+        {
+            cout << "Total bookings: " << count << endl;
+        }
+    }
+    else
+    {
+        cout << "No bookings found.\n";
+    }
+}
+
 int main()
 {
     initializeAvailability();
-    loadBookingData(); // Load existing bookings from the file
+    loadBookingData();
 
-    char choice;
+    int option;
     do
     {
+        // Displaying menu
         cout << "\n--- Hostel Room Booking System ---\n";
-        Booking booking;
+        cout << "1. Booking a Seat\n";
+        cout << "2. See Available Seats\n";
+        cout << "3. See All Booking List\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice (1-4): ";
+        cin >> option;
 
-        // Get student details
-        cin.ignore(); // Clear input buffer before getline
-        cout << "Enter your name: ";
-        getline(cin, booking.name);
-        cout << "Enter your student ID: ";
-        getline(cin, booking.studentId);
-
-        // Check if the student ID is already booked
-        if (isStudentIdAlreadyBooked(booking.studentId))
+        switch (option)
         {
-            cout << "Error: This student ID is already used for a booking. Duplicate bookings are not allowed.\n";
-            continue; // Skip to the next iteration
-        }
-
-        cout << "Enter your semester: ";
-        cin >> booking.semester;
-
-        // Display and select floor
-        displayAvailableFloors();
-        cout << "Select a floor (1-" << FLOORS << "): ";
-        cin >> booking.floor;
-
-        // Display and select room
-        displayAvailableRooms(booking.floor);
-        cout << "Select a room (1-" << ROOMS_PER_FLOOR << "): ";
-        cin >> booking.room;
-        booking.room--; // Adjust for zero-based indexing
-
-        // Display and select seat
-        displayAvailableSeats(booking.floor, booking.room);
-        cout << "Select a seat (1-" << SEATS_PER_ROOM << "): ";
-        cin >> booking.seat;
-
-        // Check if the seat is already booked
-        if (!availability[booking.floor - 1][booking.room][booking.seat - 1])
+        case 1:
         {
-            cout << "Error: This seat is already booked. Please choose another.\n";
-            continue; // Skip to the next iteration
+            Booking booking;
+            cin.ignore(); // To clear the newline character in the buffer
+
+            cout << "\nEnter your name: ";
+            getline(cin, booking.name);
+            cout << "Enter your student ID: ";
+            getline(cin, booking.studentId);
+
+            if (isStudentIdAlreadyBooked(booking.studentId))
+            {
+                cout << "Error: This student ID is already booked. Duplicate bookings are not allowed.\n";
+                break;
+            }
+
+            cout << "Enter your semester: ";
+            cin >> booking.semester;
+
+            displayAvailableFloors();
+            cout << "Select a floor (1-" << FLOORS << "): ";
+            cin >> booking.floor;
+
+            displayAvailableRooms(booking.floor);
+            cout << "Select a room (1-" << ROOMS_PER_FLOOR << "): ";
+            cin >> booking.room;
+            booking.room--;
+
+            if (!displayAvailableSeats(booking.floor, booking.room))
+            {
+                cout << "No seats available in this room.\n";
+                break;
+            }
+
+            cout << "Select a seat (1-" << SEATS_PER_ROOM << "): ";
+            cin >> booking.seat;
+
+            if (!availability[booking.floor - 1][booking.room][booking.seat - 1])
+            {
+                cout << "Error: This seat is already booked. Please choose another.\n";
+                break;
+            }
+
+            bookSeat(booking);
+            break;
         }
+        case 2:
+        {
+            int floor, room;
+            cout << "Enter floor number (1-" << FLOORS << "): ";
+            cin >> floor;
+            cout << "Enter room number (1-" << ROOMS_PER_FLOOR << "): ";
+            cin >> room;
+            room--; // Adjust for zero-indexing
+            displayAvailableSeats(floor, room);
+            break;
+        }
+        case 3:
+        {
+            displayAllBookings();
+            break;
+        }
+        case 4:
+            cout << "Exiting the system...\n";
+            break;
+        default:
+            cout << "Invalid choice. Please try again.\n";
+        }
+    } while (option != 4);
 
-        // Book the seat
-        bookSeat(booking);
-
-        // Check if the user wants to book another seat
-        cout << "Do you want to make another booking? (y/n): ";
-        cin >> choice;
-    } while (choice == 'y' || choice == 'Y');
-
-    cout << "Thank you for using the Hostel Room Booking System!\n";
     return 0;
 }

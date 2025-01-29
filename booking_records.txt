@@ -3,3 +3,9 @@ Name: Shakil, ID: 223071129, Semester: 6, Floor: 1, Room: 1, Seat: 2
 Name: Md. Alamin, ID: 223071147, Semester: 6, Floor: 1, Room: 1, Seat: 3
 Name: Siam, ID: 223071145, Semester: 6, Floor: 1, Room: 1, Seat: 4
 Name: Tasin Ahmed, ID: 223071120, Semester: 11, Floor: 1, Room: 1, Seat: 5
+Name: Miraz, ID: 22307115, Semester: 9, Floor: 1, Room: 2, Seat: 1
+Name: Mahmud, ID: 223071156, Semester: 6, Floor: 1, Room: 2, Seat: 5
+Name: Md. Rahad, ID: 22307116, Semester: 7, Floor: 1, Room: 2, Seat: 3
+Name: Tanver Ahmed, ID: 223071140, Semester: 2, Floor: 2, Room: 1, Seat: 1
+Name: Nafizur Rahman, ID: 223080101, Semester: 1, Floor: 1, Room: 2, Seat: 2
+Name: Tushar, ID: 223071122, Semester: 6, Floor: 1, Room: 2, Seat: 4
