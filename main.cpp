@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <limits>    // For numeric limits
+#include <cctype>    // For checking character properties
+#include <algorithm> // For all_of
 
 using namespace std;
 
@@ -193,6 +196,48 @@ void displayAllBookings()
     }
 }
 
+// Function to handle invalid input for floor, room, and seat numbers
+template <typename T>
+T getValidInput(const string &prompt, int min, int max)
+{
+    T value;
+    while (true)
+    {
+        cout << prompt;
+        cin >> value;
+
+        if (cin.fail() || value < min || value > max)
+        {
+            cin.clear();                                         // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+            cout << "Invalid input. Please enter a number between " << min << " and " << max << ".\n";
+        }
+        else
+        {
+            break;
+        }
+    }
+    return value;
+}
+
+// Function to validate the name (starts with a letter)
+bool isValidName(const string &name)
+{
+    return isalpha(name[0]);
+}
+
+// Function to validate the student ID (only digits)
+bool isValidStudentId(const string &studentId)
+{
+    return !studentId.empty() && all_of(studentId.begin(), studentId.end(), ::isdigit);
+}
+
+// Function to validate semester (positive number)
+bool isValidSemester(int semester)
+{
+    return semester > 0;
+}
+
 int main()
 {
     initializeAvailability();
@@ -208,7 +253,24 @@ int main()
         cout << "3. View All Bookings\n";
         cout << "4. Exit\n";
         cout << "Enter your choice (1-4): ";
-        cin >> option;
+
+        while (true)
+        {
+            cin >> option;
+
+            // Check for invalid input (non-integer or out of range)
+            if (cin.fail() || option < 1 || option > 4)
+            {
+                cin.clear();                                         // Clear the error flag
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                cout << "Invalid option. Please enter a number between 1 and 4.\n";
+                cout << "Enter your choice (1-4): ";
+            }
+            else
+            {
+                break; // Exit the loop if the input is valid
+            }
+        }
 
         switch (option)
         {
@@ -219,10 +281,27 @@ int main()
 
             cin.ignore(); // To clear newline from buffer
 
-            cout << "\nEnter your name: ";
-            getline(cin, name);
-            cout << "Enter your student ID: ";
-            getline(cin, studentId);
+            // Input and validate name
+            do
+            {
+                cout << "\nEnter your name (starts with a letter): ";
+                getline(cin, name);
+                if (!isValidName(name))
+                {
+                    cout << "Invalid name. Name should start with a letter.\n";
+                }
+            } while (!isValidName(name));
+
+            // Input and validate student ID
+            do
+            {
+                cout << "Enter your student ID (numeric digits only): ";
+                getline(cin, studentId);
+                if (!isValidStudentId(studentId))
+                {
+                    cout << "Invalid student ID. It should only contain digits.\n";
+                }
+            } while (!isValidStudentId(studentId));
 
             if (isStudentIdAlreadyBooked(studentId))
             {
@@ -230,31 +309,46 @@ int main()
                 break;
             }
 
-            cout << "Enter your semester: ";
-            cin >> semester;
+            // Input and validate semester
+            do
+            {
+                cout << "Enter your semester (positive number): ";
+                cin >> semester;
+                if (!isValidSemester(semester))
+                {
+                    cout << "Invalid semester. Please enter a positive number.\n";
+                }
+            } while (!isValidSemester(semester));
 
             displayAvailableFloors();
-            cout << "Select a floor (1-" << FLOORS << "): ";
-            cin >> floor;
+            floor = getValidInput<int>("Select a floor (1-" + to_string(FLOORS) + "): ", 1, FLOORS);
 
             displayAvailableRooms(floor);
-            cout << "Select a room (1-" << ROOMS_PER_FLOOR << "): ";
-            cin >> room;
+            room = getValidInput<int>("Select a room (1-" + to_string(ROOMS_PER_FLOOR) + "): ", 1, ROOMS_PER_FLOOR);
             room--; // Adjust for zero-indexing
 
-            if (!displayAvailableSeats(floor, room))
+            bool seatAvailable = false;
+            while (!seatAvailable)
             {
-                cout << "No seats available in this room.\n";
-                break;
-            }
-
-            cout << "Select a seat (1-" << SEATS_PER_ROOM << "): ";
-            cin >> seat;
-
-            if (!availability[floor - 1][room][seat - 1])
-            {
-                cout << "Error: This seat is already booked. Please choose another.\n";
-                break;
+                if (!displayAvailableSeats(floor, room))
+                {
+                    cout << "No seats available in this room. Please choose a different room or floor.\n";
+                    // Allow the user to select a different room or floor if no seats are available
+                    room = getValidInput<int>("Select a different room (1-" + to_string(ROOMS_PER_FLOOR) + "): ", 1, ROOMS_PER_FLOOR);
+                    room--; // Adjust for zero-indexing
+                }
+                else
+                {
+                    seat = getValidInput<int>("Select a seat (1-" + to_string(SEATS_PER_ROOM) + "): ", 1, SEATS_PER_ROOM);
+                    if (!availability[floor - 1][room][seat - 1])
+                    {
+                        cout << "Error: This seat is already booked. Please choose another.\n";
+                    }
+                    else
+                    {
+                        seatAvailable = true; // Seat is available, proceed with booking
+                    }
+                }
             }
 
             Booking booking(name, studentId, semester, floor, room, seat);
@@ -264,11 +358,8 @@ int main()
         case 2:
         {
             int floor, room;
-            cout << "Enter floor number (1-" << FLOORS << "): ";
-            cin >> floor;
-            cout << "Enter room number (1-" << ROOMS_PER_FLOOR << "): ";
-            cin >> room;
-            room--; // Adjust for zero-indexing
+            floor = getValidInput<int>("Enter floor number (1-" + to_string(FLOORS) + "): ", 1, FLOORS);
+            room = getValidInput<int>("Enter room number (1-" + to_string(ROOMS_PER_FLOOR) + "): ", 1, ROOMS_PER_FLOOR);
             displayAvailableSeats(floor, room);
             break;
         }
@@ -276,10 +367,10 @@ int main()
             displayAllBookings();
             break;
         case 4:
-            cout << "Exiting the system...\n";
+            cout << "Exiting the program.\n";
             break;
         default:
-            cout << "Invalid choice. Please try again.\n";
+            cout << "Invalid option. Please try again.\n";
         }
     } while (option != 4);
 
