@@ -360,7 +360,11 @@ int main()
             int floor, room;
             floor = getValidInput<int>("Enter floor number (1-" + to_string(FLOORS) + "): ", 1, FLOORS);
             room = getValidInput<int>("Enter room number (1-" + to_string(ROOMS_PER_FLOOR) + "): ", 1, ROOMS_PER_FLOOR);
-            displayAvailableSeats(floor, room);
+
+            // Adjust room number to zero-based indexing
+            int zeroBasedRoom = room - 1;
+
+            displayAvailableSeats(floor, zeroBasedRoom);
             break;
         }
         case 3:

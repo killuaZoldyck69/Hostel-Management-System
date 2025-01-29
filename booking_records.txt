@@ -11,3 +11,4 @@ Name: Nafizur Rahman, ID: 223080101, Semester: 1, Floor: 1, Room: 2, Seat: 2
 Name: Tushar, ID: 223071122, Semester: 6, Floor: 1, Room: 2, Seat: 4
 Name: Saimun Ahmed, ID: 223071146, Semester: 6, Floor: 2, Room: 1, Seat: 4
 Name: Akash, ID: 223071004, Semester: 6, Floor: 1, Room: 3, Seat: 1
+Name: Rezaul Kabir, ID: 223061101, Semester: 7, Floor: 1, Room: 3, Seat: 3

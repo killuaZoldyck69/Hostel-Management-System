@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    "iostream": "cpp",
+    "limits": "cpp",
+    "string": "cpp",
+    "cctype": "cpp",
+    "vector": "cpp",
+    "algorithm": "cpp",
+    "sstream": "cpp"
+  }
+}
