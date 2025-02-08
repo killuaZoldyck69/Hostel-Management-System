@@ -12,3 +12,5 @@ Name: Tushar, ID: 223071122, Semester: 6, Floor: 1, Room: 2, Seat: 4
 Name: Saimun Ahmed, ID: 223071146, Semester: 6, Floor: 2, Room: 1, Seat: 4
 Name: Akash, ID: 223071004, Semester: 6, Floor: 1, Room: 3, Seat: 1
 Name: Rezaul Kabir, ID: 223061101, Semester: 7, Floor: 1, Room: 3, Seat: 3
+Name: shakil ahamed1, ID: 20, Semester: 6, Floor: 2, Room: 2, Seat: 5
+Name: Rofiq Ahmed, ID: 22306128, Semester: 9, Floor: 1, Room: 3, Seat: 4

@@ -40,21 +40,58 @@ public:
 };
 
 // Hostel availability array
-bool availability[FLOORS][ROOMS_PER_FLOOR][SEATS_PER_ROOM];
+// bool availability[FLOORS][ROOMS_PER_FLOOR][SEATS_PER_ROOM];
+
+// Function to initialize availability
+// void initializeAvailability()
+// {
+//     for (int i = 0; i < FLOORS; i++)
+//     {
+//         for (int j = 0; j < ROOMS_PER_FLOOR; j++)
+//         {
+//             for (int k = 0; k < SEATS_PER_ROOM; k++)
+//             {
+//                 availability[i][j][k] = true; // All seats are available initially
+//             }
+//         }
+//     }
+// }
+
+bool ***availability; // Triple pointer for dynamic allocation
 
 // Function to initialize availability
 void initializeAvailability()
+{
+    availability = new bool **[FLOORS]; // Allocate memory for floors
+
+    for (int i = 0; i < FLOORS; i++)
+    {
+        availability[i] = new bool *[ROOMS_PER_FLOOR]; // Allocate memory for rooms on each floor
+
+        for (int j = 0; j < ROOMS_PER_FLOOR; j++)
+        {
+            availability[i][j] = new bool[SEATS_PER_ROOM]; // Allocate memory for seats in each room
+
+            for (int k = 0; k < SEATS_PER_ROOM; k++)
+            {
+                availability[i][j][k] = true; // Initialize all seats as available
+            }
+        }
+    }
+}
+
+// Function to free allocated memory
+void freeAvailability()
 {
     for (int i = 0; i < FLOORS; i++)
     {
         for (int j = 0; j < ROOMS_PER_FLOOR; j++)
         {
-            for (int k = 0; k < SEATS_PER_ROOM; k++)
-            {
-                availability[i][j][k] = true; // All seats are available initially
-            }
+            delete[] availability[i][j]; // Free seats
         }
+        delete[] availability[i]; // Free rooms
     }
+    delete[] availability; // Free floors
 }
 
 // Function to load booking data from file and update availability
@@ -377,6 +414,7 @@ int main()
             cout << "Invalid option. Please try again.\n";
         }
     } while (option != 4);
+    freeAvailability(); // Free dynamically allocated memory
 
     return 0;
 }
