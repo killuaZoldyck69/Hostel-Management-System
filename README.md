@@ -20,6 +20,7 @@
 ## 4. 🛠️ **Technologies Used**
 
 - C++
+- Dynamic Memory Allocation
 - File Handling (fstream)
 - Standard Library (iostream, vector, sstream, limits, cctype, algorithm)
 
